@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Designer Hub</title>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(180deg, #020617, #0f172a);
+      color: #e5e7eb;
+    }
+    header {
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #6366f1, #22d3ee);
+      color: #020617;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      background: #020617;
+      padding: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    nav button {
+      background: #1e293b;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    nav button:hover { background: #6366f1; }
+    main { max-width: 1100px; margin: auto; padding: 20px; }
+    .card {
+      background: #020617;
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 15px 30px rgba(0,0,0,.4);
+    }
+    .hidden { display: none; }
+    .profile {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .profile img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+    }
+    footer { text-align: center; opacity: .7; padding: 30px; }
+
+    /* RESPONSIVO */
+    @media (max-width: 600px) {
+      header h1 { font-size: 26px; }
+      nav button { padding: 8px 14px; font-size: 14px; }
+      .profile { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Designer Hub</h1>
+  <p>Design do zero • Login Google • Perfil</p>
+</header>
+
+<nav>
+  <button onclick="showTab('inicio')">Início</button>
+  <button onclick="showTab('apps')">Apps</button>
+  <button onclick="showTab('dicas')">Dicas</button>
+  <button onclick="showTab('perfil')">Perfil</button>
+  <button onclick="loginGoogle()">Login Google</button>
+  <button onclick="logout()">Sair</button>
+</nav>
+
+<main>
+  <section id="inicio" class="card">
+    <h2>Como começar</h2>
+    <ul>
+      <li>Aprenda cores e fontes</li>
+      <li>Use Canva ou Figma</li>
+      <li>Treine todos os dias</li>
+    </ul>
+  </section>
+
+  <section id="apps" class="card hidden">
+    <h2>Apps recomendados</h2>
+    <ul>
+      <li>Canva</li>
+      <li>Figma</li>
+      <li>Photoshop</li>
+    </ul>
+  </section>
+
+  <section id="dicas" class="card hidden">
+    <h2>Dicas</h2>
+    <ul>
+      <li>Menos é mais</li>
+      <li>Até 2 fontes</li>
+      <li>Cores consistentes</li>
+    </ul>
+  </section>
+
+  <section id="perfil" class="card hidden">
+    <h2>Perfil do Usuário</h2>
+    <div class="profile">
+      <img id="photo" src="https://via.placeholder.com/90" />
+      <div>
+        <p><b>Nome:</b> <span id="name">---</span></p>
+        <p><b>Email:</b> <span id="email">---</span></p>
+        <p><b>Status:</b> Logado com Google</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2026 - Designer Hub
+</footer>
+
+<script>
+  /* FIREBASE CONFIG – SUBSTITUA PELOS SEUS DADOS */
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU_PROJETO.firebaseapp.com",
+    projectId: "SEU_PROJETO",
+    appId: "SUA_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+  }
+
+  function logout() {
+    auth.signOut();
+  }
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById('name').innerText = user.displayName;
+      document.getElementById('email').innerText = user.email;
+      document.getElementById('photo').src = user.photoURL;
+      showTab('perfil');
+    }
+  });
+
+  function showTab(id) {
+    document.querySelectorAll('main section').forEach(s => s.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+  }
+</script>
+
+</body>
+</html>
